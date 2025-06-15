@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoVision Solar Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-left">
+      <div class="app-logo">
+        <i class="fas fa-solar-panel"></i>
+      </div>
+      <h1>EcoVision Solar Placement</h1>
+    </div>
+    
+    <div class="header-nav">
+      <a href="#"><i class="fas fa-home"></i> Home</a>
+      <a href="#"><i class="fas fa-info-circle"></i> About</a>
+      <a href="#"><i class="fas fa-file-pdf"></i> Export PDF</a>
+      <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+    </div>
+    
+    <button class="mode-toggle">
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-sliders-h"></i> Dashboard</h2>
+      </div>
+      <nav>
+        <ul>
+          <!-- <li><a href="#" id="uploadNav" class="active"><i class="fas fa-upload"></i> Upload Images</a></li>
+          <li><a href="#" id="cameraNav"><i class="fas fa-camera"></i> Camera Capture</a></li> -->
+          <li><a href="/govt_subsidy"><i class="fas fa-bolt"></i> Govt Subsidy</a></li>
+          <!-- <li><a href="#" id="futureNav"><i class="fas fa-rocket"></i> Future Features</a></li>
+          <li><a href="#"><i class="fas fa-history"></i> Analysis History</a></li>
+          <li><a href="#"><i class="fas fa-user"></i> Account Settings</a></li> -->
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <!-- Input Section -->
+      <div class="card">
+        <h2><i class="fas fa-cloud-upload-alt"></i> Upload Rooftop Images</h2>
+        <div class="card-header-actions">
+          <button class="card-header-btn"><i class="fas fa-info-circle"></i></button>
+          <button class="card-header-btn"><i class="fas fa-history"></i></button>
+        </div>
+        <form id="uploadForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="images">Select multiple images of your rooftop</label>
+            <input type="file" name="images" id="images" accept="image/*" multiple required />
+          </div>
+          
+          <div class="input-row">
+            <div class="form-group">
+              <label for="latitude">Latitude</label>
+              <input type="text" id="latitude" name="latitude" placeholder="e.g., 37.7749">
+            </div>
+            
+            <div class="form-group">
+              <label for="longitude">Longitude</label>
+              <input type="text" id="longitude" name="longitude" placeholder="e.g., -122.4194">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="time">Analysis Time</label>
+            <input type="text" id="time" name="time" placeholder="Current time">
+          </div>
+          
+          <button type="submit" id="uploadAnalyzeBtn"><i class="fas fa-chart-line"></i> Analyze Images</button>
+        </form>
+      </div>
+
+      <!-- Camera Section -->
+      <div class="card">
+        <h2><i class="fas fa-camera"></i> Capture Using Camera</h2>
+        <div class="card-header-actions">
+          <button class="card-header-btn"><i class="fas fa-info-circle"></i></button>
+        </div>
+        <button id="openCamera"><i class="fas fa-video"></i> Open Camera</button>
+        <div id="cameraRow" class="camera-row" style="display:none;">
+          <div class="camera-col">
+            <video id="video" autoplay playsinline></video>
+            <button id="snap"><i class="fas fa-camera"></i> Capture Photo</button>
+          </div>
+          <div class="camera-col">
+            <canvas id="canvas" style="display:none;"></canvas>
+            <form id="cameraForm" enctype="multipart/form-data" style="margin-top:15px;">
+              <input type="hidden" name="camera_image" id="camera_image_input" />
+              <div class="input-row">
+                <div class="form-group">
+                  <label for="camera_latitude">Latitude</label>
+                  <input type="text" id="camera_latitude" name="latitude" placeholder="e.g., 37.7749">
+                </div>
+                <div class="form-group">
+                  <label for="camera_longitude">Longitude</label>
+                  <input type="text" id="camera_longitude" name="longitude" placeholder="e.g., -122.4194">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="camera_time">Analysis Time</label>
+                <input type="text" id="camera_time" name="time" placeholder="Current time">
+              </div>
+              <button type="submit" id="cameraAnalyzeBtn"><i class="fas fa-chart-line"></i> Analyze Captured Image</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="card" id="resultsCard" style="display: none;">
+        <h2><i class="fas fa-solar-panel"></i> Solar Placement Analysis</h2>
+        <div class="card-header-actions">
+          <button class="card-header-btn"><i class="fas fa-expand"></i></button>
+          <button class="card-header-btn"><i class="fas fa-download"></i></button>
+        </div>
+        
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="value" id="exposureValue">--</div>
+            <div class="label">Solar Exposure</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="tiltValue">--</div>
+            <div class="label">Optimal Tilt</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="orientationValue">--</div>
+            <div class="label">Best Orientation</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" id="areaValue">--</div>
+            <div class="label">Usable Area</div>
+          </div>
+        </div>
+        
+        <div class="result-content">
+          <img id="resultImage" class="result-img" alt="Analyzed Rooftop Image" />
+          <div class="result-text">
+            <ul>
+              <li><strong>Optimal Angle:</strong> <span class="value" id="optimalAngle">--</span></li>
+              <li><strong>Shadow Impact:</strong> <span class="value" id="shadowImpact">--</span></li>
+              <li><strong>Estimated Exposure:</strong> <span class="value" id="estimatedExposure">--</span></li>
+              <li><strong>Recommended Area:</strong> <span class="value" id="recommendedArea">--</span></li>
+              <li><strong>Orientation:</strong> <span class="value" id="orientationText">--</span></li>
+              <li><strong>Potential Output:</strong> <span class="value" id="potentialOutput">--</span></li>
+              <li><strong>Annual Savings:</strong> <span class="value" id="annualSavings">--</span></li>
+            </ul>
+            
+            <div class="action-buttons">
+              <button id="exportPdfBtn"><i class="fas fa-file-pdf"></i> Export as PDF</button>
+              <button class="secondary" id="aiRecommenderBtn"><i class="fas fa-robot"></i> AI Recommendations</button>
+              <button class="accent" id="downloadReportBtn"><i class="fas fa-download"></i> Full Report</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <canvas id="solarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- AI Recommendations -->
+      <div class="card ai-card" id="aiCard" style="display: none;">
+        <h2><i class="fas fa-robot"></i> AI Solar Suggestions</h2>
+        <div class="card-header-actions">
+          <button class="card-header-btn"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <div id="aiOutput" class="ai-output"></div>
+      </div>
+      
+      <!-- Map & Weather -->
+      <div class="card" id="locationCard" style="display: none;">
+        <h2><i class="fas fa-map-marked-alt"></i> Location & Weather</h2>
+        <div class="map-widget">
+          <i class="fas fa-map-marker-alt"></i> <span id="locationText">Location not detected</span>
+        </div>
+        
+        <div class="weather-widget">
+          <div class="weather-icon">
+            <i class="fas fa-sun"></i>
+          </div>
+          <div class="weather-info">
+            <div class="weather-temp" id="currentTemp">--</div>
+            <div class="weather-desc" id="currentWeather">--</div>
+            <div class="weather-details">
+              <div><i class="fas fa-wind"></i> <span id="windSpeed">--</span></div>
+              <div><i class="fas fa-tint"></i> <span id="humidity">--</span></div>
+              <div><i class="fas fa-sun"></i> <span id="uvIndex">--</span></div>
+              <div><i class="fas fa-cloud"></i> <span id="cloudCover">--</span></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="weather-widget">
+          <div class="weather-icon">
+            <i class="fas fa-cloud-sun"></i>
+          </div>
+          <div class="weather-info">
+            <div class="weather-temp" id="forecastTemp">--</div>
+            <div class="weather-desc" id="forecastWeather">--</div>
+            <div class="weather-details">
+              <div><i class="fas fa-calendar-day"></i> Forecast</div>
+              <div>Solar Index: <span id="solarIndex">--</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loading -->
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner"></div>
+    <p class="loading-text">Analyzing rooftop for solar potential...</p>
+  </div>
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

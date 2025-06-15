@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About | EcoVision Solar Placement</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo-section">
+      <div class="logo-dot"></div>
+      <span class="logo-text">EcoVision Solar Placement</span>
+    </div>
+    <nav class="nav-links">
+      <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
+      <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a>
+      <a href="{{ url_for('export') }}"><i class="fas fa-file-pdf"></i> Export PDF</a>
+      <a href="{{ url_for('help') }}"><i class="fas fa-question-circle"></i> Help</a>
+    </nav>
+  </header>
+
+  <main style="padding: 20px;">
+    <h1>About EcoVision Solar Placement</h1>
+    <p>EcoVision Solar Placement leverages YOLO-based object detection models (.pt) alongside solar algorithms and Gemini AI for recommending optimal solar panel placement. Our goal is to assist users in maximizing solar efficiency using intelligent automation.</p>
+    <p>  We use YOLO (You Only Look Once) models (.pt files) for object detection, combined with solar angle calculations and Gemini AI for smart recommendations.</p>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Help | EcoVision Solar Placement</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo-section">
+      <div class="logo-dot"></div>
+      <span class="logo-text">EcoVision Solar Placement</span>
+    </div>
+    <nav class="nav-links">
+      <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
+      <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a>
+      <a href="{{ url_for('export') }}"><i class="fas fa-file-pdf"></i> Export PDF</a>
+      <a href="{{ url_for('help') }}"><i class="fas fa-question-circle"></i> Help</a>
+    </nav>
+  </header>
+
+  <main style="padding: 20px;">
+    <h1>Help & Support</h1>
+    <p>Welcome to the EcoVision Solar Placement help page. Here’s how you can use this app:</p>
+
+    <ul>
+      <li><strong>📤 Upload Images:</strong> Upload one or more rooftop images to analyze for solar panel placement.</li>
+      <li><strong>📸 Capture Image:</strong> Use your camera to capture a rooftop image in real-time for analysis.</li>
+      <li><strong>⚡ Govt Subsidy:</strong> Access central and state government solar subsidy information.</li>
+      <li><strong>🚀 AI Recommendations:</strong> Get AI-generated tips using Gemini AI after analysis.</li>
+      <li><strong>📄 Export PDF:</strong> Download a report of the analysis including images and recommendations.</li>
+    </ul>
+
+    <h2>Need More Help?</h2>
+    <p>Contact us at: <a href="mailto:support@ecovision.com">support@ecovision.com</a></p>
+  </main>
+
+</body>
+</html>

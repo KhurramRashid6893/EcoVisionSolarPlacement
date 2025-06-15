@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solar Placement Demo</title>
+    <style>
+        :root {
+            --primary: #27ae60;
+            --primary-dark: #219150;
+            --secondary: #2980b9;
+            --dark: #2c3e50;
+            --darker: #1a252f;
+            --light: #f0f2f5;
+            --lighter: #ffffff;
+            --accent: #f39c12;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            --gray: #95a5a6;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f0f7fa, #e3f2e5);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Header */
+        .main-header {
+            background: linear-gradient(to right, var(--darker), var(--dark));
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.4rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-logo {
+            font-size: 1.6rem;
+            background: var(--accent);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--lighter);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--dark);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Forms and Buttons */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-row .form-group {
+            flex: 1;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        button:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        button.secondary {
+            background: var(--secondary);
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background: #2472a4;
+        }
+
+        button.accent {
+            background: var(--accent);
+        }
+
+        button.accent:hover:not(:disabled) {
+            background: #e67e22;
+        }
+
+        /* Camera Section */
+        .camera-row {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .camera-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #video, #canvas {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            background: #f8f9fa;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+
+        /* Results */
+        .result-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .result-img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+
+        .result-text {
+            flex: 1;
+        }
+
+        .result-text ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .result-text li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .result-text li:last-child {
+            border-bottom: none;
+        }
+
+        .result-text strong {
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .result-text .value {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .metric-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+
+        .metric-card .label {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        /* AI Card */
+        .ai-card {
+            border-left: 4px solid var(--secondary);
+            background: linear-gradient(to right, #f8fbfe, #ffffff);
+        }
+
+        .ai-output {
+            background: #eef6f8;
+            padding: 15px;
+            border-radius: 12px;
+            white-space: pre-wrap;
+            color: var(--dark);
+            line-height: 1.6;
+            font-size: 1rem;
+            border: 1px solid rgba(41, 128, 185, 0.1);
+        }
+
+        /* Charts */
+        .chart-container {
+            height: 250px;
+            margin-top: 15px;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            color: var(--dark);
+            font-weight: 500;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* Map Widget */
+        .map-widget {
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 15px;
+            background: #e9f7ef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* Weather Widget */
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            margin-top: 15px;
+        }
+
+        .weather-icon {
+            font-size: 2.2rem;
+            color: var(--accent);
+        }
+
+        .weather-info {
+            flex: 1;
+        }
+
+        .weather-temp {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .weather-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 0.85rem;
+        }
+
+        .weather-details div {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-row button {
+            flex: 1;
+        }
+
+        /* Tab Navigation */
+        .tab-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 50px;
+            background: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 700px;
+                margin: 0 auto;
+            }
+            
+            .action-buttons {
+                flex-direction: row;
+            }
+            
+            .camera-row {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <div class="app-logo">☀️</div>
+            <h1>Solar Placement Demo</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tab-container">
+            <button class="tab-button active" data-tab="upload">Upload</button>
+            <button class="tab-button" data-tab="camera">Camera</button>
+            <button class="tab-button" data-tab="results">Results</button>
+        </div>
+
+        <!-- Upload Tab -->
+        <div class="tab-content active" id="upload-tab">
+            <div class="card">
+                <h2>📤 Upload Rooftop Image</h2>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="images">Select an image of your rooftop</label>
+                        <input type="file" name="images" id="images" accept="image/*" required />
+                    </div>
+                    
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="latitude">Latitude</label>
+                            <input type="text" id="latitude" name="latitude" placeholder="e.g., 37.7749" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="longitude">Longitude</label>
+                            <input type="text" id="longitude" name="longitude" placeholder="e.g., -122.4194" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time">Analysis Time</label>
+                        <input type="text" id="time" name="time" placeholder="Current time" readonly>
+                    </div>
+                    
+                    <button type="submit" id="uploadAnalyzeBtn">
+                        <span class="button-icon">📊</span> Analyze Image
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Camera Tab -->
+        <div class="tab-content" id="camera-tab">
+            <div class="card">
+                <h2>📸 Capture Using Camera</h2>
+                <button id="openCamera">
+                    <span class="button-icon">📷</span> Open Camera
+                </button>
+                <div id="cameraRow" class="camera-row" style="display:none;">
+                    <div class="camera-col">
+                        <video id="video" autoplay playsinline></video>
+                        <button id="snap">
+                            <span class="button-icon">⭕</span> Capture Photo
+                        </button>
+                    </div>
+                    <div class="camera-col">
+                        <canvas id="canvas" style="display:none;"></canvas>
+                        <form id="cameraForm" style="margin-top:15px;">
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label for="camera_latitude">Latitude</label>
+                                    <input type="text" id="camera_latitude" name="latitude" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="camera_longitude">Longitude</label>
+                                    <input type="text" id="camera_longitude" name="longitude" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="camera_time">Analysis Time</label>
+                                <input type="text" id="camera_time" name="time" readonly>
+                            </div>
+                            <button type="submit" id="cameraAnalyzeBtn">
+                                <span class="button-icon">📊</span> Analyze Captured Image
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Tab -->
+        <div class="tab-content" id="results-tab">
+            <div class="card" id="resultsCard">
+                <h2>📊 Solar Placement Analysis</h2>
+                
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="value" id="exposureValue">78%</div>
+                        <div class="label">Solar Exposure</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value" id="tiltValue">34°</div>
+                        <div class="label">Optimal Tilt</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value" id="orientationValue">S</div>
+                        <div class="label">Best Orientation</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value" id="areaValue">62m²</div>
+                        <div class="label">Usable Area</div>
+                    </div>
+                </div>
+                
+                <div class="result-content">
+                    <img id="resultImage" class="result-img" src="https://images.unsplash.com/photo-1545156521-77bd85671d30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Analyzed Rooftop Image" />
+                    <div class="result-text">
+                        <ul>
+                            <li><strong>Optimal Angle:</strong> <span class="value" id="optimalAngle">34°</span></li>
+                            <li><strong>Shadow Impact:</strong> <span class="value" id="shadowImpact">Low</span></li>
+                            <li><strong>Estimated Exposure:</strong> <span class="value" id="estimatedExposure">5.2 hours/day</span></li>
+                            <li><strong>Recommended Area:</strong> <span class="value" id="recommendedArea">62 m²</span></li>
+                            <li><strong>Orientation:</strong> <span class="value" id="orientationText">South (180°)</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="aiRecommenderBtn">
+                        <span class="button-icon">🤖</span> AI Recommendations
+                    </button>
+                    <button class="accent" id="downloadReportBtn">
+                        <span class="button-icon">📄</span> Download Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="card ai-card" id="aiCard">
+                <h2>🤖 AI Solar Suggestions</h2>
+                <div id="aiOutput" class="ai-output">
+                    Based on the image analysis, the best spot for installing solar panels is the south-facing roof area with minimal shadow interference during peak sun hours. This location receives approximately 5.2 hours of direct sunlight daily. 
+
+                    We recommend:
+                    - Using monocrystalline panels with 22% efficiency
+                    - 34° tilt angle for optimal year-round performance
+                    - 8 kW system size for your energy needs
+                    - Consider micro-inverters for better shade management
+
+                    Estimated annual savings: $1,240 with a 6.2 year ROI.
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>📍 Location & Weather</h2>
+                <div class="map-widget">
+                    <span id="locationText">Location: Detecting GPS...</span>
+                </div>
+                
+                <div class="weather-widget">
+                    <div class="weather-icon">☀️</div>
+                    <div class="weather-info">
+                        <div class="weather-temp" id="currentTemp">24°C</div>
+                        <div class="weather-desc" id="currentWeather">Sunny with clear skies</div>
+                        <div class="weather-details">
+                            <div>💨 <span id="windSpeed">12 km/h</span></div>
+                            <div>💧 <span id="humidity">45%</span></div>
+                            <div>☀️ <span id="uvIndex">UV: 7 High</span></div>
+                            <div>☁️ <span id="cloudCover">10%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p class="loading-text">Analyzing rooftop for solar potential...</p>
+    </div>
+
+    <script>
+        // Tab navigation
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Show corresponding tab content
+                const tabId = this.getAttribute('data-tab') + '-tab';
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Initialize solar chart
+        function initChart() {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'solarChart';
+            document.querySelector('.chart-container').appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Estimated Solar Generation (kWh)',
+                        data: [420, 480, 620, 780, 920, 980, 1040, 1020, 880, 720, 520, 440],
+                        backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                        borderColor: 'rgba(39, 174, 96, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'kWh'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Monthly Energy Production Forecast'
+                        }
+                    }
+                }
+            });
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        // === GLOBAL ===
+        window.allResults = [];
+        window.currentLocation = null;
+        window.currentWeather = null;
+
+        // === GPS LOCATION ===
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        window.currentLocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        };
+                        
+                        // Update location fields
+                        document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+                        document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+                        document.getElementById('camera_latitude').value = position.coords.latitude.toFixed(6);
+                        document.getElementById('camera_longitude').value = position.coords.longitude.toFixed(6);
+                        
+                        // Update location text
+                        document.getElementById('locationText').textContent = 
+                            `Location: ${position.coords.latitude.toFixed(6)}° N, ${position.coords.longitude.toFixed(6)}° W`;
+                        
+                        // Simulate weather data
+                        simulateWeatherData();
+                    },
+                    error => {
+                        console.error('Error getting location:', error);
+                        document.getElementById('locationText').textContent = 'Location not available';
+                        
+                        // Set default values
+                        document.getElementById('latitude').value = "37.7749";
+                        document.getElementById('longitude').value = "-122.4194";
+                        document.getElementById('camera_latitude').value = "37.7749";
+                        document.getElementById('camera_longitude').value = "-122.4194";
+                        
+                        simulateWeatherData();
+                    }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+                document.getElementById('locationText').textContent = 'Geolocation not supported';
+                
+                // Set default values
+                document.getElementById('latitude').value = "37.7749";
+                document.getElementById('longitude').value = "-122.4194";
+                document.getElementById('camera_latitude').value = "37.7749";
+                document.getElementById('camera_longitude').value = "-122.4194";
+                
+                simulateWeatherData();
+            }
+        }
+
+        function simulateWeatherData() {
+            // Simulated weather data
+            window.currentWeather = {
+                temp: 24,
+                condition: 'Sunny',
+                wind: '12 km/h',
+                humidity: '45%',
+                uv: '7 High',
+                clouds: '10%'
+            };
+            
+            // Update weather widgets
+            document.getElementById('currentTemp').textContent = `${window.currentWeather.temp}°C`;
+            document.getElementById('currentWeather').textContent = window.currentWeather.condition;
+            document.getElementById('windSpeed').textContent = window.currentWeather.wind;
+            document.getElementById('humidity').textContent = window.currentWeather.humidity;
+            document.getElementById('uvIndex').textContent = window.currentWeather.uv;
+            document.getElementById('cloudCover').textContent = window.currentWeather.clouds;
+        }
+
+        // === CAMERA SETUP ===
+        const openCameraBtn = document.getElementById('openCamera');
+        const cameraRow = document.getElementById('cameraRow');
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById('snap');
+        let currentStream = null;
+
+        if (openCameraBtn) {
+            openCameraBtn.addEventListener('click', function () {
+                cameraRow.style.display = 'flex';
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                        .then(stream => {
+                            currentStream = stream;
+                            video.srcObject = stream;
+                            video.play();
+                        })
+                        .catch(() => alert('Camera access denied or not available.'));
+                } else {
+                    alert('Camera API not supported in this browser.');
+                }
+            });
+        }
+
+        if (snap) {
+            snap.addEventListener('click', function () {
+                if (!currentStream) {
+                    alert("Please open the camera first!");
+                    return;
+                }
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                canvas.style.display = 'block';
+            });
+        }
+
+        function stopCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            video.srcObject = null;
+        }
+
+        // === IMAGE UPLOAD ===
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const file = this.querySelector('input[name="images"]').files[0];
+            if (!file) {
+                alert("Please select an image.");
+                return;
+            }
+            
+            // Get location and time
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            
+            showLoading(true);
+            simulateImageAnalysis(file, latitude, longitude);
+        });
+
+        // === CAMERA FORM ===
+        document.getElementById('cameraForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!canvas.style.display || canvas.style.display === 'none') {
+                alert("Please capture an image before analyzing.");
+                return;
+            }
+            
+            // Get location and time
+            const latitude = document.getElementById('camera_latitude').value;
+            const longitude = document.getElementById('camera_longitude').value;
+            
+            showLoading(true);
+            
+            // Convert canvas to data URL
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            simulateImageAnalysis(null, latitude, longitude, dataUrl);
+        });
+
+        // Simulate image analysis
+        function simulateImageAnalysis(file, latitude, longitude, dataUrl = null) {
+            setTimeout(() => {
+                showLoading(false);
+                
+                // Switch to results tab
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector('[data-tab="results"]').classList.add('active');
+                document.getElementById('results-tab').classList.add('active');
+                
+                // Update results with simulated data
+                const freePercent = Math.floor(Math.random() * 30) + 60; // 60-90%
+                const tilt = Math.floor(Math.random() * 15) + 25; // 25-40°
+                
+                document.getElementById('exposureValue').textContent = `${freePercent}%`;
+                document.getElementById('tiltValue').textContent = `${tilt}°`;
+                document.getElementById('orientationValue').textContent = 'S';
+                
+                document.getElementById('optimalAngle').textContent = `${tilt}°`;
+                document.getElementById('shadowImpact').textContent = freePercent > 75 ? 'Low' : 
+                                                                    freePercent > 50 ? 'Medium' : 'High';
+                document.getElementById('estimatedExposure').textContent = `${Math.floor(Math.random() * 3) + 5}.${Math.floor(Math.random() * 9)} hours/day`;
+                document.getElementById('recommendedArea').textContent = `${Math.floor(freePercent * 0.8)} m²`;
+                document.getElementById('orientationText').textContent = `South (180°)`;
+                
+                // Update image
+                if (dataUrl) {
+                    document.getElementById('resultImage').src = dataUrl;
+                } else if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('resultImage').src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+                
+                // Show results card
+                document.getElementById('resultsCard').style.display = 'block';
+                document.getElementById('aiCard').style.display = 'block';
+            }, 1500);
+        }
+
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize chart
+            initChart();
+            
+            // Get current location
+            getLocation();
+            
+            // Set current time
+            const now = new Date();
+            document.getElementById('time').value = now.toLocaleString();
+            document.getElementById('camera_time').value = now.toLocaleString();
+        });
+    </script>
+</body>
+</html>
