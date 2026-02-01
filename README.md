@@ -1,5 +1,5 @@
 🌞 EcoVision Solar Placement App
-EcoVision is an AI-powered web app that helps users identify the best locations on their rooftops to install solar panels. It uses computer vision and solar algorithms to recommend optimal panel placement, orientation, and tilt.
+EcoVision is an AI-powered web app that helps users identify the best locations on their rooftops to install solar panels. It uses computer vision and solar algorithms to recommend optimal panel placement, orientation, and tilt.     
 
 🚀 Features
 📤 Upload rooftop image or 📸 capture using camera
